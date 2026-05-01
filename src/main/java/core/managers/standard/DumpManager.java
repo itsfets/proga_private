@@ -50,7 +50,6 @@ public class DumpManager implements DumpManagerTemplate {
 
     @Override
     public TreeSet<StudyGroup> readCollection() {
-        boolean skipPerson = false;
         TreeSet<StudyGroup> studyGroups = new TreeSet<>();
         StringBuilder fileContent = new StringBuilder();
         try {
@@ -66,7 +65,7 @@ public class DumpManager implements DumpManagerTemplate {
             console.println("Initialized an empty collection");
             return studyGroups;
         } catch (NullPointerException e) {
-            console.println("The file " + fileName + " does not exist! Initialized an empty collection!");
+            console.println("Required system variable does not exist! Initialized a new Collection!");
             return studyGroups;
         }
         if (fileContent.isEmpty()) {return studyGroups;}
