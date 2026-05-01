@@ -1,26 +1,28 @@
 package console.commands;
 
-import console.StandardConsole;
-import core.managers.StandardCollectionManager;
-import core.models.ExecutionResponse;
+import console.Console;
+import console.ExecutionResponse;
+import core.managers.CollectionManager;
 
 public class RemoveById extends Command {
-    private final StandardConsole console;
-    private final StandardCollectionManager collectionManager;
+    private final Console console;
+    private final CollectionManager collectionManager;
 
-    public RemoveById(StandardConsole console, StandardCollectionManager collectionManager) {
+    public RemoveById(Console console, CollectionManager collectionManager) {
         super("remove_by_id <id>", "Removes StudyGroup with given ID");
         this.console = console;
         this.collectionManager = collectionManager;
     }
 
     public ExecutionResponse apply(String[] arguments) {
-        if (arguments[1].isEmpty()) return new ExecutionResponse().wrongArgCountMessage();
+        if (arguments[1].isBlank()) return new ExecutionResponse().wrongArgCountMessage();
+        Boolean success;
         try {
-            collectionManager.remove(Integer.parseInt(arguments[1]));
+            success = collectionManager.remove(Integer.parseInt(arguments[1]));
         } catch (NumberFormatException e) {
             return new ExecutionResponse("This command's argument requires an integer!", false);
         }
-        return new ExecutionResponse("Removed StudyGroup successfully!", true);
+        if (success) return new ExecutionResponse("Removed StudyGroup successfully!", true);
+        else return new ExecutionResponse("Failed to remove StudyGroup as there is no StudyGroup with given ID!", false);
     }
 }

@@ -1,6 +1,6 @@
 package console.commands;
 
-import core.models.ExecutionResponse;
+import console.ExecutionResponse;
 
 public abstract class Command {
     private final String name;

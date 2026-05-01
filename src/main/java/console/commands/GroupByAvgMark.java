@@ -1,22 +1,22 @@
 package console.commands;
 
-import console.StandardConsole;
-import core.managers.StandardCollectionManager;
-import core.models.ExecutionResponse;
+import console.Console;
+import console.ExecutionResponse;
+import core.managers.CollectionManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class GroupByAvgMark extends Command {
-    private final StandardCollectionManager collectionManager;
+    private final CollectionManager collectionManager;
 
-    public GroupByAvgMark(StandardConsole console, StandardCollectionManager collectionManager) {
+    public GroupByAvgMark(Console console, CollectionManager collectionManager) {
         super("group_counting_by_average_mark", "Groups StudyGroups by value of averageMark field and returns size of each group");
         this.collectionManager = collectionManager;
     }
 
     public ExecutionResponse apply(String[] arguments) {
-        if (!arguments[1].isEmpty()) return new ExecutionResponse().noArgExecutionMessage();
+        if (!arguments[1].isBlank()) return new ExecutionResponse().noArgExecutionMessage();
         Map<String, Integer> dict = new HashMap<>();
         for (var group : collectionManager.getCollection()) {
             dict.merge(Double.toString(group.getAverageMark()), 1, Integer::sum);

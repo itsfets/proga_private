@@ -1,19 +1,19 @@
 package console.commands;
 
-import console.StandardConsole;
-import core.managers.StandardCollectionManager;
-import core.models.ExecutionResponse;
+import console.Console;
+import console.ExecutionResponse;
+import core.managers.CollectionManager;
 
 public class FilterHasName extends Command {
-    private final StandardCollectionManager collectionManager;
+    private final CollectionManager collectionManager;
 
-    public FilterHasName(StandardConsole console, StandardCollectionManager collectionManager) {
+    public FilterHasName(Console console, CollectionManager collectionManager) {
         super("filter_contains_name <name>", "returns all StudyGroups, who have set substring in their name field");
         this.collectionManager = collectionManager;
     }
 
     public ExecutionResponse apply(String[] arguments) {
-        if (arguments[1].isEmpty()) return new ExecutionResponse().wrongArgCountMessage();
+        if (arguments[1].isBlank()) return new ExecutionResponse().wrongArgCountMessage();
         String filter =  arguments[1];
         StringBuilder s = new StringBuilder("Result:\n");
         for (var group : collectionManager.getCollection()) {
