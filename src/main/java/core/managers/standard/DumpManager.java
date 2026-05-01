@@ -53,16 +53,20 @@ public class DumpManager implements DumpManagerTemplate {
         boolean skipPerson = false;
         TreeSet<StudyGroup> studyGroups = new TreeSet<>();
         StringBuilder fileContent = new StringBuilder();
-        File file = new File(fileName);
-        if (!file.exists()) {
-            console.println("File " + fileName + " does not exist!");
-        }
-        try (Scanner scanner = new Scanner(file)) {
+        try {
+            File file = new File(fileName);
+            if (!file.exists()) {
+                console.println("File " + fileName + " does not exist!");
+            }
+            Scanner scanner = new Scanner(file);
             while (scanner.hasNextLine()) {
                 fileContent.append(scanner.nextLine()).append("\n");
             }
-        } catch (IOException e) {
+        } catch (FileNotFoundException e) {
             console.println("Initialized an empty collection");
+            return studyGroups;
+        } catch (NullPointerException e) {
+            console.println("The file " + fileName + " does not exist! Initialized an empty collection!");
             return studyGroups;
         }
         if (fileContent.isEmpty()) {return studyGroups;}
