@@ -1,6 +1,6 @@
 package console.commands;
 
-import console.Console;
+import console.standard.Console;
 import console.ExecutionResponse;
 import core.managers.standard.CommandManager;
 import core.runners.standard.StandardScriptRunner;
