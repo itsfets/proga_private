@@ -7,7 +7,7 @@ import java.util.*;
 
 public class CollectionManager implements core.managers.CollectionManager {
     private LocalDateTime initTime;
-    private int currentId = 1;
+    private int currentId = 0;
     private Map<Integer, StudyGroup> studyGroups = new HashMap<>();
     private TreeSet<StudyGroup> collection = new TreeSet<StudyGroup>();
     private final DumpManager dumpManager;

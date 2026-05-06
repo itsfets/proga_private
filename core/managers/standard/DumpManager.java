@@ -32,11 +32,6 @@ public class DumpManager implements DumpManagerTemplate {
 
     public DumpManager(Console console) {
         String path = System.getenv().get(ENV_NAME);
-        if (path != null) {
-            if (Files.isDirectory(Paths.get(path))) {
-                this.fileName = path + "collection.xml";
-            } else {this.fileName = path;}
-        }
         this.console = console;
         this.dbFactory = DocumentBuilderFactory.newInstance();
         try {
@@ -45,12 +40,16 @@ public class DumpManager implements DumpManagerTemplate {
             console.printError(e.getMessage());
             throw new RuntimeException(e);
         }
+        if (path != null) {
+            if (Files.isDirectory(Paths.get(path))) {
+                this.fileName = path + "collection.xml";
+            } else {this.fileName = path;}
+        } else {console.println("Environment variable " + ENV_NAME + " is missing! The application cannot run without it!"); return;}
     }
 
 
     @Override
     public TreeSet<StudyGroup> readCollection() {
-        boolean skipPerson = false;
         TreeSet<StudyGroup> studyGroups = new TreeSet<>();
         StringBuilder fileContent = new StringBuilder();
         File file = new File(fileName);
