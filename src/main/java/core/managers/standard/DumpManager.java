@@ -32,11 +32,6 @@ public class DumpManager implements DumpManagerTemplate {
 
     public DumpManager(Console console) {
         String path = System.getenv().get(ENV_NAME);
-        if (path != null) {
-            if (Files.isDirectory(Paths.get(path))) {
-                this.fileName = path + "collection.xml";
-            } else {this.fileName = path;}
-        }
         this.console = console;
         this.dbFactory = DocumentBuilderFactory.newInstance();
         try {
@@ -45,6 +40,11 @@ public class DumpManager implements DumpManagerTemplate {
             console.printError(e.getMessage());
             throw new RuntimeException(e);
         }
+        if (path != null) {
+            if (Files.isDirectory(Paths.get(path))) {
+                this.fileName = path + "collection.xml";
+            } else {this.fileName = path;}
+        } else {console.println("Environment variable " + ENV_NAME + " is missing! The application cannot run without it!"); return;}
     }
 
 
@@ -52,20 +52,16 @@ public class DumpManager implements DumpManagerTemplate {
     public TreeSet<StudyGroup> readCollection() {
         TreeSet<StudyGroup> studyGroups = new TreeSet<>();
         StringBuilder fileContent = new StringBuilder();
-        try {
-            File file = new File(fileName);
-            if (!file.exists()) {
-                console.println("File " + fileName + " does not exist!");
-            }
-            Scanner scanner = new Scanner(file);
+        File file = new File(fileName);
+        if (!file.exists()) {
+            console.println("File " + fileName + " does not exist!");
+        }
+        try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNextLine()) {
                 fileContent.append(scanner.nextLine()).append("\n");
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             console.println("Initialized an empty collection");
-            return studyGroups;
-        } catch (NullPointerException e) {
-            console.println("Required system variable does not exist! Initialized a new Collection!");
             return studyGroups;
         }
         if (fileContent.isEmpty()) {return studyGroups;}
