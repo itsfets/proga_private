@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="Proga_Semester_2.main:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/Proga_Semester_2_main_jar</output-path>
-    <root id="archive" name="Proga_Semester_2.main.jar">
-      <element id="module-output" name="Proga_Semester_2.main" />
-    </root>
-  </artifact>
-</component>
