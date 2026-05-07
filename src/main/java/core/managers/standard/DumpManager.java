@@ -32,11 +32,6 @@ public class DumpManager implements DumpManagerTemplate {
 
     public DumpManager(Console console) {
         String path = System.getenv().get(ENV_NAME);
-        if (path != null) {
-            if (Files.isDirectory(Paths.get(path))) {
-                this.fileName = path + "collection.xml";
-            } else {this.fileName = path;}
-        }
         this.console = console;
         this.dbFactory = DocumentBuilderFactory.newInstance();
         try {
@@ -44,6 +39,14 @@ public class DumpManager implements DumpManagerTemplate {
         } catch (ParserConfigurationException e) {
             console.printError(e.getMessage());
             throw new RuntimeException(e);
+        }
+        if (path != null) {
+            if (Files.isDirectory(Paths.get(path))) {
+                this.fileName = String.valueOf(Paths.get(path ,"/collection.xml"));
+            } else {this.fileName = path;}
+        } else {
+            console.println("Couldn't get path for system variable " + ENV_NAME + "!\nExiting the program!");
+            System.exit(0);
         }
     }
 

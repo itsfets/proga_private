@@ -26,7 +26,7 @@ public class Asker {
         ask.askThing("transferredStudents: ", builder, StandardBuilder::transferredStudents, Long::valueOf, StandardConfig.STUDENTS_COUNT);
         ask.askThing("averageMark: ", builder, StandardBuilder::averageMark, Double::valueOf, StandardConfig.AVERAGE_MARK);
         ask.askThing("formOfEducation (" + Arrays.toString(FormOfEducation.values()) + ") : ", builder, StandardBuilder::formOfEducation, FormOfEducation::valueOf, StandardConfig.FORM_OF_EDUCATION);
-        ask.askThing("Has groupAdmin? (T/F): ", builder, StandardBuilder::hasGroupAdmin, Boolean::valueOf, StandardConfig.HAS_GROUP_ADMIN);
+        ask.askThing("Has groupAdmin? (True for Yes, anything else is treated as No): ", builder, StandardBuilder::hasGroupAdmin, Boolean::valueOf, StandardConfig.HAS_GROUP_ADMIN);
         if (builder.get_hasGroupAdmin()) {
             ask.askThing("groupAdmin.name: ", builder, StandardBuilder::groupAdmin_name, s -> s, StandardConfig.PERSON_NAME);
             ask.askThing("groupAdmin.height: ", builder, StandardBuilder::groupAdmin_height, Double::valueOf, StandardConfig.PERSON_HEIGHT);
