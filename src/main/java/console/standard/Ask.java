@@ -41,21 +41,4 @@ public class Ask implements console.AskTemplate {
             }
         }
     }
-
-    public boolean askGroupAdmin(String prompt) {
-        while (true) {
-            console.print(prompt);
-            String line = console.readln().trim();
-            switch (line) {
-                case "exit":
-                    throw new AskBreak();
-                case "Y":
-                    return true;
-                case "N":
-                    return false;
-                default:
-                    console.println("Please enter Y (yes) or N (no)!");
-            }
-        }
-    }
 }

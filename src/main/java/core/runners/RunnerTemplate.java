@@ -4,5 +4,5 @@ import console.ExecutionResponse;
 
 public interface RunnerTemplate {
 
-    abstract void run();
+    void run();
 }

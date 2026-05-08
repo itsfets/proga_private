@@ -6,7 +6,7 @@ import java.util.function.Function;
 public interface AskTemplate {
     <B, T> B askThing(String prompt, B builder, BiConsumer<B, T> setter, Function<String, T> parser, Function<T, String> configRule);
 
-    public static class AskBreak extends RuntimeException {
+    class AskBreak extends RuntimeException {
         @Override
         public String getMessage() {
             return "Exiting without saving...";

@@ -23,7 +23,7 @@ public class Asker {
         ask.askThing("coordinates.x: ", builder, StandardBuilder::coordinates_x, Integer::valueOf, StandardConfig.COORDINATES_X);
         ask.askThing("coordinates.y: ", builder, StandardBuilder::coordinates_y, Integer::valueOf, StandardConfig.COORDINATES_Y);
         ask.askThing("studentsCount: ", builder, StandardBuilder::studentsCount, Long::valueOf, StandardConfig.STUDENTS_COUNT);
-        ask.askThing("transferredStudents: ", builder, StandardBuilder::transferredStudents, Long::valueOf, StandardConfig.STUDENTS_COUNT);
+        ask.askThing("transferredStudents: ", builder, StandardBuilder::transferredStudents, Long::valueOf, StandardConfig.TRANSFERRED_STUDENTS);
         ask.askThing("averageMark: ", builder, StandardBuilder::averageMark, Double::valueOf, StandardConfig.AVERAGE_MARK);
         ask.askThing("formOfEducation (" + Arrays.toString(FormOfEducation.values()) + ") : ", builder, StandardBuilder::formOfEducation, FormOfEducation::valueOf, StandardConfig.FORM_OF_EDUCATION);
         ask.askThing("Has groupAdmin? (True for Yes, anything else is treated as No): ", builder, StandardBuilder::hasGroupAdmin, Boolean::valueOf, StandardConfig.HAS_GROUP_ADMIN);
@@ -38,6 +38,4 @@ public class Asker {
         }
         return builder.build(validator, id);
     }
-
-
 }
