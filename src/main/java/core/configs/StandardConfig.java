@@ -33,7 +33,7 @@ public class StandardConfig {
     public static final Function<Double, String> PERSON_HEIGHT = s
             -> (s <= 0) ? "groupAdmin.height must be higher than 0!" : null;
     public static final Function<Color, String> PERSON_COLOR = s
-            -> (s != null && !EnumSet.allOf(Color.class).contains(s)) ? "invalid groupAdmin.eyeColor color!\n Valid colors are: " + Arrays.toString(Color.values()) + " or null!" : null;
+            -> null;
 
     public static final Function<Float, String> LOCATION_X = s
             -> (s == null) ? "groupAdmin.location.x cannot be null" : null;
