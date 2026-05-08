@@ -23,22 +23,22 @@ public class StandardBuilder implements BuilderTemplate<StudyGroup> {
     private long groupAdmin_location_z;
     private String groupAdmin_location_name;
 
-    public StandardBuilder id(int v) { this.id = v; return this; }
-    public StandardBuilder name(String v) { this.name = v; return this; }
-    public StandardBuilder coordinates_x(int v) { this.coordinates_x = v; return this; }
-    public StandardBuilder coordinates_y(int v) { this.coordinates_y = v; return this; }
-    public StandardBuilder studentsCount(long v) { this.studentsCount = v; return this; }
-    public StandardBuilder transferredStudents(long v) { this.transferredStudents = v; return this; }
-    public StandardBuilder averageMark(Double v) { this.averageMark = v; return this; }
-    public StandardBuilder formOfEducation(FormOfEducation v) { this.formOfEducation = v; return this; }
-    public StandardBuilder hasGroupAdmin(boolean v) { this.hasGroupAdmin = v; return this; }
-    public StandardBuilder groupAdmin_name(String v) { this.groupAdmin_name = v; return this; }
-    public StandardBuilder groupAdmin_height(double v) { this.groupAdmin_height = v; return this; }
-    public StandardBuilder groupAdmin_eyeColor(Color v) { this.groupAdmin_color = v; return this; }
-    public StandardBuilder groupAdmin_location_x(Float v) { this.groupAdmin_location_x = v; return this; }
-    public StandardBuilder groupAdmin_location_y(Double v) { this.groupAdmin_location_y = v; return this; }
-    public StandardBuilder groupAdmin_location_z(Long v) { this.groupAdmin_location_z = v; return this; }
-    public StandardBuilder groupAdmin_location_name(String v) { this.groupAdmin_location_name = v; return this; }
+    public void id(int v) { this.id = v; }
+    public void name(String v) { this.name = v; }
+    public void coordinates_x(int v) { this.coordinates_x = v; }
+    public void coordinates_y(int v) { this.coordinates_y = v; }
+    public void studentsCount(long v) { this.studentsCount = v; }
+    public void transferredStudents(long v) { this.transferredStudents = v; }
+    public void averageMark(Double v) { this.averageMark = v; }
+    public void formOfEducation(FormOfEducation v) { this.formOfEducation = v; }
+    public void hasGroupAdmin(boolean v) { this.hasGroupAdmin = v; }
+    public void groupAdmin_name(String v) { this.groupAdmin_name = v; }
+    public void groupAdmin_height(double v) { this.groupAdmin_height = v; }
+    public void groupAdmin_eyeColor(Color v) { this.groupAdmin_color = v; }
+    public void groupAdmin_location_x(Float v) { this.groupAdmin_location_x = v; }
+    public void groupAdmin_location_y(Double v) { this.groupAdmin_location_y = v; }
+    public void groupAdmin_location_z(Long v) { this.groupAdmin_location_z = v; }
+    public void groupAdmin_location_name(String v) { this.groupAdmin_location_name = v; }
     public boolean get_hasGroupAdmin() { return this.hasGroupAdmin; }
 
     @Override
