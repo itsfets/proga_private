@@ -18,7 +18,7 @@ public class Ask implements console.AskTemplate {
     }
 
     @Override
-    public <B, T> B askThing(String prompt, B builder, BiConsumer<B, T> setter, Function<String, T> parser, Function<T, String> configRule) {
+    public <B, T> void askThing(String prompt, B builder, BiConsumer<B, T> setter, Function<String, T> parser, Function<T, String> configRule) {
         while (true) {
             console.print(prompt);
             try {
@@ -30,7 +30,7 @@ public class Ask implements console.AskTemplate {
                 String err = configRule.apply(value);
                 if (err == null) {
                     setter.accept(builder, value);
-                    return builder;
+                    return;
                 } else {
                     console.println(err);
                 }
