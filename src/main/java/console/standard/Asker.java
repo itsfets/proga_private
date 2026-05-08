@@ -25,12 +25,12 @@ public class Asker {
         ask.askThing("studentsCount: ", builder, StandardBuilder::studentsCount, Long::valueOf, StandardConfig.STUDENTS_COUNT);
         ask.askThing("transferredStudents: ", builder, StandardBuilder::transferredStudents, Long::valueOf, StandardConfig.TRANSFERRED_STUDENTS);
         ask.askThing("averageMark: ", builder, StandardBuilder::averageMark, Double::valueOf, StandardConfig.AVERAGE_MARK);
-        ask.askThing("formOfEducation (" + Arrays.toString(FormOfEducation.values()) + ") : ", builder, StandardBuilder::formOfEducation, FormOfEducation::valueOf, StandardConfig.FORM_OF_EDUCATION);
+        ask.askThing("formOfEducation (can't be null)\n" + Arrays.toString(FormOfEducation.values()) + ": ", builder, StandardBuilder::formOfEducation, FormOfEducation::valueOf, StandardConfig.FORM_OF_EDUCATION);
         ask.askThing("Has groupAdmin? (True for Yes, anything else is treated as No): ", builder, StandardBuilder::hasGroupAdmin, Boolean::valueOf, StandardConfig.HAS_GROUP_ADMIN);
         if (builder.get_hasGroupAdmin()) {
             ask.askThing("groupAdmin.name: ", builder, StandardBuilder::groupAdmin_name, s -> s, StandardConfig.PERSON_NAME);
             ask.askThing("groupAdmin.height: ", builder, StandardBuilder::groupAdmin_height, Double::valueOf, StandardConfig.PERSON_HEIGHT);
-            ask.askThing("groupAdmin.eyeColor (" + Arrays.toString(Color.values()) + "): ", builder, StandardBuilder::groupAdmin_eyeColor, s -> s.isBlank() ? null : Color.valueOf(s.toUpperCase()), StandardConfig.PERSON_COLOR);
+            ask.askThing("groupAdmin.eyeColor (can be null)\n" + Arrays.toString(Color.values()) + ": ", builder, StandardBuilder::groupAdmin_eyeColor, s -> s.isBlank() ? null : Color.valueOf(s.toUpperCase()), StandardConfig.PERSON_COLOR);
             ask.askThing("groupAdmin.location.x: ", builder, StandardBuilder::groupAdmin_location_x, Float::valueOf, StandardConfig.LOCATION_X);
             ask.askThing("groupAdmin.location.y: ", builder, StandardBuilder::groupAdmin_location_y, Double::valueOf, StandardConfig.LOCATION_Y);
             ask.askThing("groupAdmin.location.z: ", builder, StandardBuilder::groupAdmin_location_z, Long::valueOf, StandardConfig.LOCATION_Z);

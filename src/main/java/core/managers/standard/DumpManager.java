@@ -1,5 +1,6 @@
 package core.managers.standard;
 
+import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -98,11 +99,10 @@ public class DumpManager implements DumpManagerTemplate {
                 Element studyGroupAdmin = (Element) element.getElementsByTagName("Person").item(0);
                 if (studyGroupAdmin.getAttribute("null").equals("FALSE")) {
                     Element studyGroupAdminLocation = (Element) studyGroupAdmin.getElementsByTagName("groupAdminLocation").item(0);
-
                     studyGroup.setGroupAdmin(new Person(
                             studyGroupAdmin.getAttribute("name"),
                             Double.parseDouble(studyGroupAdmin.getAttribute("height")),
-                            Color.valueOf(studyGroupAdmin.getAttribute("eyeColor")),
+                            get_color(studyGroupAdmin.getAttribute("eyeColor")),
                             new Location(
                                     Float.parseFloat(studyGroupAdminLocation.getAttribute("x")),
                                     Double.parseDouble(studyGroupAdminLocation.getAttribute("y")),
@@ -146,7 +146,9 @@ public class DumpManager implements DumpManagerTemplate {
                 groupAdminElement.setAttribute("null", Boolean.FALSE.toString());
                 groupAdminElement.setAttribute("name", studyGroup.getGroupAdmin().getName());
                 groupAdminElement.setAttribute("height", String.valueOf(studyGroup.getGroupAdmin().getHeight()));
-                groupAdminElement.setAttribute("eyeColor", studyGroup.getGroupAdmin().getEyeColor().toString());
+                if (studyGroup.getGroupAdmin().getEyeColor() != null) {
+                    groupAdminElement.setAttribute("eyeColor", studyGroup.getGroupAdmin().getEyeColor().toString());
+                } else groupAdminElement.setAttribute("eyeColor", null);
 
                 Element groupAdminLocationElement = doc.createElement("groupAdminLocation");
                 groupAdminLocationElement.setAttribute("x", String.valueOf(studyGroup.getGroupAdmin().getLocation().getX()));
@@ -178,6 +180,17 @@ public class DumpManager implements DumpManagerTemplate {
             console.println("Access denied!");
         } catch (Exception e) {
             console.printError(e.getMessage());
+        }
+    }
+
+    private Color get_color(String color) {
+        try {
+            if (color != null) {
+                return Color.valueOf(color);
+            } else return null;
+        } catch (IllegalArgumentException e) {
+            console.println("Detected an unknown value in groupAdmin.eyeColor! It was replaced with null value!");
+            return null;
         }
     }
 }
