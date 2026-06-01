@@ -11,4 +11,5 @@ plugins {
 }
 
 rootProject.name = 'Proga_Semester_2'
-include('app', 'list', 'utilities')
+//include('app', 'list', 'utilities')
+include('client', 'common', 'server')
