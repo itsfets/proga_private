@@ -11,7 +11,7 @@ public class Ask {
         this.console = console;
     }
 
-    public <B, T> Ask askThing(String prompt, B builder, BiConsumer<B, T> setter, Function<String, T> parser, Function<T, String> configRule) {
+    public <B, T> Ask askThing(String prompt, B builder, BiConsumer<B, T> setter, Function<String, T> parser, Function<T, String> configRule) throws Ask.AskBreak {
         while (true) {
             console.print(prompt);
             try {

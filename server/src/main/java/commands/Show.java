@@ -12,7 +12,7 @@ public class Show extends Command {
     }
 
     @Override
-    public Response apply(Object request_data) {
+    public Response apply(Object request_data, String login) {
         String s = collectionManager.toString();
         return new Response(true, "command executed successfully!", s);
     }

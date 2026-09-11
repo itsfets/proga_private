@@ -2,12 +2,15 @@ package modelworks;
 
 import dto.*;
 
+import java.time.LocalDateTime;
+
 
 public class StandardBuilder {
     private int id;
     private String name;
     private int coordinates_x;
     private int coordinates_y;
+    private LocalDateTime creationDate;
     private long studentsCount;
     private long transferredStudents;
     private double averageMark;
@@ -116,11 +119,12 @@ public class StandardBuilder {
 
     public StudyGroup buildRaw(int id) {
         Coordinates coordinates = new Coordinates(coordinates_x, coordinates_y);
+        Person admin = new Person(groupAdmin_name, groupAdmin_height, groupAdmin_color,
+                new Location(groupAdmin_location_x, groupAdmin_location_y, groupAdmin_location_z, groupAdmin_location_name));
         if (hasGroupAdmin) {
-            return new StudyGroup(id, name, coordinates, studentsCount, transferredStudents, averageMark, formOfEducation, new Person(groupAdmin_name, groupAdmin_height, groupAdmin_color,
-                    new Location(groupAdmin_location_x, groupAdmin_location_y, groupAdmin_location_z, groupAdmin_location_name)));
+            return new StudyGroup(id, name, coordinates, studentsCount, transferredStudents, averageMark, formOfEducation, admin, null);
         }
-        return new StudyGroup(id, name, coordinates, studentsCount, transferredStudents, averageMark, formOfEducation, null);
+        return new StudyGroup(id, name, coordinates, studentsCount, transferredStudents, averageMark, formOfEducation, null, null);
     }
 
     public StudyGroup build(StandardValidator validator) {
@@ -130,5 +134,13 @@ public class StandardBuilder {
             throw new IllegalArgumentException("StudyGroup wasn't created!\n  - " + String.join("\n  - ", result.errors()));
         }
         return group;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 }

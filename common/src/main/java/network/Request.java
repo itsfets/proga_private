@@ -5,33 +5,19 @@ import dto.Commands;
 import java.io.Serial;
 import java.io.Serializable;
 
-public class Request implements Serializable {
+public record Request(Commands command, Object data, String login, String password) implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    private final Commands command;
-    private final java.lang.Object data;
 
-    public Request(Commands command) {
-        this.command = command;
-        this.data = null;
-    }
-
-    public Request(Commands command, java.lang.Object data) {
-        this.command = command;
-        this.data = data;
-    }
-
-    public Commands getCommand() {
-        return command;
-    }
-
-    public java.lang.Object getData() {
-        return data;
+    public Request(Commands command, String login, String password) {
+        this(command, null, login, password);
     }
 
     @Override
     public String toString() {
         return "Request[command=" + command + ", " +
-                "data=" + data + ']';
+                "data=" + data + ", " +
+                "login=" + login + ", " +
+                "password=" + password + "]";
     }
 }

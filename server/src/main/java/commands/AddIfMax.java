@@ -18,17 +18,17 @@ public class AddIfMax extends Command {
     }
 
     @Override
-    public Response apply(Object request_data) {
+    public Response apply(Object request_data, String login) {
         if (!(request_data instanceof StudyGroup studyGroup))
-            return new Response(false, Response.WRONG_TYPE() + "studyGroup");
-        if (!(standardValidator.validate(studyGroup).isValid())) return new Response(false, Response.INVALIG_SG());
+            return new Response(false, Response.WRONG_TYPE + "studyGroup");
+        if (!(standardValidator.validate(studyGroup).isValid())) return new Response(false, Response.INVALIG_SG);
         var temp = standardCollection.getCollection().stream().max(StudyGroup::compareTo).map(StudyGroup::getAverageMark).orElse(Double.MIN_VALUE);
-        ;
         if (studyGroup.getAverageMark() > temp) {
-            studyGroup.setId(standardCollection.getFreeId());
             studyGroup.setCreationDate(LocalDateTime.now());
-            standardCollection.add(studyGroup);
-            return new Response(true, "studyGroup has been added successfully!");
-        } else return new Response(true, "studyGroup wasn't added because it didn't pass the filter!");
+            studyGroup.setCreatedBy(login);
+            return (standardCollection.add(studyGroup)) ? new Response(true, "studyGroup has been added successfully!")
+                    : new Response(false, "command failed and studyGroup has not been added!");
+        }
+        return new Response(true, "studyGroup wasn't added because it didn't pass the filter!");
     }
 }

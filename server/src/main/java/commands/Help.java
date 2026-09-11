@@ -13,7 +13,7 @@ public class Help extends Command {
         this.commandManager = commandManager;
     }
 
-    public Response apply(Object request_data) {
+    public Response apply(Object request_data, String login) {
         String s = "Available commands:\n";
         s += commandManager.getCommands().values().stream().map(command -> String.format("%1$30s - %2$s", command.getName(), command.getDesc())).collect(Collectors.joining("\n"));
         return new Response(true, "command executed successfuly!", s);

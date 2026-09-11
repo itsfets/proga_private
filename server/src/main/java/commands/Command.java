@@ -11,7 +11,7 @@ public abstract class Command {
         this.desc = desc;
     }
 
-    public abstract Response apply(Object request_data);
+    public abstract Response apply(Object request_data, String login);
 
     @Override
     public boolean equals(java.lang.Object obj) {

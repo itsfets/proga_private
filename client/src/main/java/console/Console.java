@@ -10,8 +10,9 @@ public class Console {
     private final PrintStream out = System.out;
     private final PrintStream err = System.err;
     private final Scanner sc;
-    private final String prompt = " ";
+    private final String prompt = "% ";
     private final ArrayDeque<Scanner> scanners = new ArrayDeque<>(MAX_RECURSION);
+
 
     public Console() {
         this.sc = new Scanner(System.in);
@@ -49,7 +50,6 @@ public class Console {
     }
 
     public void selectFileSC(Scanner scanner) {
-
     }
 
     public void selectConsoleSC() {

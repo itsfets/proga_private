@@ -12,7 +12,7 @@ public class SumStudsCount extends Command {
     }
 
     @Override
-    public Response apply(Object request_data) {
+    public Response apply(Object request_data, String login) {
         long sum = 0;
         for (var studyGroup : collectionManager.getCollection()) {
             sum += studyGroup.getStudentsCount();

@@ -3,6 +3,7 @@ package commands;
 import console.Console;
 import core.Runner;
 import core.ScriptRunner;
+import core.Session;
 import dto.Commands;
 import network.Request;
 
@@ -11,9 +12,11 @@ import java.io.File;
 public class ExecuteScript extends Command {
     private final Console console;
     private final Runner runnerInstance;
+    private final Session userSession;
 
-    public ExecuteScript(Console console, Runner runnerInstance) {
+    public ExecuteScript(Session session, Console console, Runner runnerInstance) {
         super("execute_script <file_name>", "reads and executes commands from a given script file. Commands must be written in the same way you would write them here");
+        this.userSession = session;
         this.console = console;
         this.runnerInstance = runnerInstance;
     }
@@ -33,6 +36,6 @@ public class ExecuteScript extends Command {
             ScriptRunner scriptRunner = new ScriptRunner(runnerInstance, console);
             scriptRunner.execute(fileName);
         }, "ScriptExecutor-" + fileName).start();
-        return new Request(Commands.EXECUTESCRIPT, scriptFile);
+        return new Request(Commands.EXECUTESCRIPT, scriptFile, userSession.getLogin(), userSession.getPassword());
     }
 }

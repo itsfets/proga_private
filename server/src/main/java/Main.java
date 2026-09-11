@@ -2,7 +2,7 @@ import commands.*;
 import core.CommandList;
 import core.Runner;
 import core.StandardCollection;
-import core.StandardDumper;
+import database.Manager;
 import modelworks.StandardValidator;
 
 import java.io.IOException;
@@ -15,8 +15,8 @@ public class Main {
             System.out.println("Detected args! They were ignored!");
         }
 
-        var dumper = new StandardDumper();
-        var collection = new StandardCollection(dumper);
+        var dbManager = new Manager("s501234", "KTIvOtaySqtUP5bo");
+        var collection = new StandardCollection(dbManager);
         collection.init();
         var validator = new StandardValidator();
 
@@ -29,6 +29,8 @@ public class Main {
             registerCommand("execute_script", new ExecuteScript());
             registerCommand("clear", new Clear(collection));
             registerCommand("exit", new Exit());
+            registerCommand("set_login", new SetLogin());
+            registerCommand("set_password", new SetPassword());
             registerCommand("filter_contains_name", new FilterHasName(collection));
             registerCommand("group_counting_by_average_mark", new GroupByAvgMark(collection));
             registerCommand("remove_by_id", new RemoveById(collection));
@@ -39,11 +41,10 @@ public class Main {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("server shutting down...");
-            collection.saveCollection();
         }));
 
         try {
-            Runner runner = new Runner(DEFAULT_PORT, commandRepository);
+            Runner runner = new Runner(DEFAULT_PORT, commandRepository, dbManager);
             runner.run();
         } catch (IOException e) {
             System.err.println("failed to start the runner: " + e.getMessage());

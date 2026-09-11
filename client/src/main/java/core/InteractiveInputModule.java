@@ -38,17 +38,15 @@ public class InteractiveInputModule implements Runnable {
                 String args = parts.length > 1 ? parts[1].trim() : "";
 
                 Command cmd = commandList.getCommandMap().get(cmdName);
-                if (cmd != null) {
-                    Request req = cmd.apply(new String[]{cmdName, args});
-                    if (req != null) {
-                        if (req.getCommand().getString().equalsIgnoreCase("execute_script")) {
-
-                        }
-                        queue.put(req);
-                    }
-                } else {
+                if (cmd == null) {
                     console.println("unknown command: " + cmdName + ". type 'help' for a list of available commands.");
+                    continue;
                 }
+                Request req = cmd.apply(new String[]{cmdName, args});
+                if (req == null) {
+                    continue;
+                }
+                queue.put(req);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 console.println("interrupted.");
