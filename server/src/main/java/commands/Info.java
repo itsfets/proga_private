@@ -20,7 +20,7 @@ public class Info extends Command {
     }
 
     @Override
-    public Response apply(Object request_data) {
+    public Response apply(Object request_data, String login) {
         String s = "[INFORMATION ABOUT THE COLLECTION]\n" + "Type: " + collectionManager.getCollection().getClass() + "\n" +
                 "Size: " + collectionManager.getCollection().size() + "\n" +
                 handleInitTime(collectionManager.getInitTime().truncatedTo(ChronoUnit.SECONDS));

@@ -18,19 +18,16 @@ public class Add extends Command {
     }
 
     @Override
-    public Response apply(Object request_data) {
+    public Response apply(Object request_data, String login) {
         if (!(request_data instanceof StudyGroup studyGroup)) {
-            return new Response(false, Response.WRONG_TYPE() + "studyGroup");
+            return new Response(false, Response.WRONG_TYPE + "studyGroup");
         }
         var validation_res = standardValidator.validate(studyGroup);
         if (validation_res.isValid()) {
-            studyGroup.setId(standardCollection.getFreeId());
             studyGroup.setCreationDate(LocalDateTime.now());
-            if (standardCollection.add(studyGroup)) {
-                return new Response(true, "studyGroup has been added successfully!");
-            } else {
-                return new Response(false, "studyGroup has not been added!");
-            }
-        } else return new Response(false, Response.INVALIG_SG());
+            studyGroup.setCreatedBy(login);
+            return (standardCollection.add(studyGroup)) ? new Response(true, "studyGroup has been added successfully!")
+                    : new Response(false, "command failed and studyGroup has not been added!");
+        } else return new Response(false, Response.INVALIG_SG);
     }
 }

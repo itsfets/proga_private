@@ -16,14 +16,14 @@ public class UpdateId extends Command {
     }
 
     @Override
-    public Response apply(Object request_data) {
+    public Response apply(Object request_data, String login) {
         StudyGroup studyGroup = (StudyGroup) request_data;
+        studyGroup.setCreatedBy(login);
         if (collectionManager.byId(studyGroup.getId()) == null)
             return new Response(false, "no studyGroup with given ID in the collection! Collection was untouched!");
-        if (validator.validate(studyGroup).isValid()) {
-            boolean res = collectionManager.update(studyGroup);
-            if (res) return new Response(true, "command executed successfully!");
-            else return new Response(false, "failed to update studyGroup!");
-        } else return new Response(false, "invalid studyGroup!");
+        if (!validator.validate(studyGroup).isValid()) return new Response(false, "invalid studyGroup!");
+        boolean res = collectionManager.update(studyGroup, login);
+        if (res) return new Response(true, "command executed successfully!");
+        return new Response(false, "failed to update studyGroup!");
     }
 }

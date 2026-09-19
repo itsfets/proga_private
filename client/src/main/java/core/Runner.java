@@ -144,13 +144,13 @@ public class Runner implements Runnable {
                 Response resp = (Response) serial.deserialize(data);
                 if (resp != null) {
                     respQueue.offer(resp);
-                    if (resp.isSuccess()) {
-                        console.println(resp.getMessage());
-                        if (resp.getData() != null && !resp.getData().isBlank()) {
-                            console.println(resp.getData());
+                    if (resp.success()) {
+                        console.println(resp.message());
+                        if (resp.data() != null && !resp.data().isBlank()) {
+                            console.println(resp.data());
                         }
                     } else {
-                        console.println(resp.getMessage());
+                        console.println(resp.message());
                     }
                 }
             } catch (ClassNotFoundException e) {
@@ -158,7 +158,7 @@ public class Runner implements Runnable {
             }
             key.interestOpsAnd(~SelectionKey.OP_READ);
             selector.wakeup();
-        } catch (IOException e) { // <-- Обработка потери соединения
+        } catch (IOException e) {
             console.println("connection lost during read: " + e.getMessage() + ", retrying...");
             reconnect(key);
         }
@@ -168,6 +168,7 @@ public class Runner implements Runnable {
         try {
             if (!key.isValid()) return;
             Request req = queue.remove();
+            if (req.command() == null) return;
             byte[] data = serial.serialize(req);
             ByteBuffer writeBuffer = ByteBuffer.allocate(4 + data.length);
             writeBuffer.clear().putInt(data.length).put(data).flip();

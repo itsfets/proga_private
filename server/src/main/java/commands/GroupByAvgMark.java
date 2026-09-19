@@ -15,7 +15,7 @@ public class GroupByAvgMark extends Command {
     }
 
     @Override
-    public Response apply(Object request_data) {
+    public Response apply(Object request_data, String login) {
         Map<String, Integer> dict = new HashMap<>();
         standardCollection.getCollection().forEach(group -> dict.merge(Double.toString(group.getAverageMark()), 1, Integer::sum));
         StringBuilder s = new StringBuilder("There are following avgMark groups in the Collection:\n");

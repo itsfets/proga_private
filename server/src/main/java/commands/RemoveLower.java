@@ -7,6 +7,7 @@ import network.Response;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RemoveLower extends Command {
     private final StandardValidator standardValidator;
@@ -19,20 +20,19 @@ public class RemoveLower extends Command {
     }
 
     @Override
-    public Response apply(Object request_data) {
+    public Response apply(Object request_data, String login) {
         if (!(request_data instanceof StudyGroup studyGroup))
-            return new Response(false, Response.WRONG_TYPE() + "studyGroup");
-        if (standardValidator.validate(studyGroup).isValid()) {
-            double controlAvgMark = studyGroup.getAverageMark();
-            List<Integer> idsToRemove = new ArrayList<>();
-            standardCollection.getCollection().stream().filter(group -> group.getAverageMark() < controlAvgMark).forEach(group -> {
-                idsToRemove.add(group.getId());
-            });
-            if (!idsToRemove.isEmpty()) {
-                idsToRemove.stream().map(standardCollection::remove);
-                return new Response(true, "studyGroups were removed successfully");
-            }
-            return new Response(true, "no studyGroups passed the filter!");
-        } else return new Response(false, Response.INVALIG_SG());
+            return new Response(false, Response.WRONG_TYPE + "studyGroup");
+        if (!standardValidator.validate(studyGroup).isValid()) return new Response(false, Response.INVALIG_SG);
+        double controlAvgMark = studyGroup.getAverageMark();
+        List<Integer> idsToRemove = new ArrayList<>();
+        standardCollection.getCollection().stream().filter(group -> group.getAverageMark() < controlAvgMark).filter(group -> Objects.equals(group.getCreatedBy(), login)).forEach(group -> {
+            idsToRemove.add(group.getId());
+        });
+        if (idsToRemove.isEmpty()) return new Response(true, "no studyGroups passed the filter!");
+        for (Integer id : idsToRemove) {
+            standardCollection.remove(standardCollection.byId(id), login);
+        }
+        return new Response(true, "studyGroups were removed successfully");
     }
 }

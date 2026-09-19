@@ -12,15 +12,14 @@ public class RemoveById extends Command {
     }
 
     @Override
-    public Response apply(Object request_data) {
+    public Response apply(Object request_data, String login) {
         try {
-            int id = Integer.parseInt((String) request_data);
-            boolean success = collectionManager.remove(id);
-            if (success) {
-                return new Response(true, "studyGroup successfully removed!");
-            } else return new Response(false, "failed to remove studyGroup!");
+            int id = Integer.parseInt(request_data.toString());
+            boolean success = collectionManager.remove(collectionManager.byId(id), login);
+            if (success) return new Response(true, "studyGroup successfully removed!");
+            return new Response(false, "failed to remove studyGroup!");
         } catch (NumberFormatException e) {
-            return new Response(false, Response.WRONG_TYPE() + "Integer");
+            return new Response(false, Response.WRONG_TYPE + "Integer");
         }
 
     }

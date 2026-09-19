@@ -1,6 +1,7 @@
 package core;
 
 import commands.Command;
+import database.Manager;
 import network.Request;
 import network.Response;
 import network.Serializator;
@@ -12,20 +13,25 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.concurrent.ForkJoinPool;
 
 
 public class Runner implements Runnable {
     private final int port;
-    private final ServerSocketChannel serverSocket = ServerSocketChannel.open();
-    private final Selector selector = Selector.open();
+    private final ServerSocketChannel serverSocket;
+    private final Selector selector;
     private final Serializator serial = new Serializator();
     private final CommandList commands;
     private volatile boolean running = true;
+    private final Manager dbManager;
+    private final ForkJoinPool forkJoinPool = new ForkJoinPool();
 
-
-    public Runner(int port, CommandList commands) throws IOException {
+    public Runner(int port, CommandList commands, Manager dbManager) throws IOException {
         this.port = port;
         this.commands = commands;
+        this.dbManager = dbManager;
+        this.serverSocket = ServerSocketChannel.open();
+        this.selector = Selector.open();
     }
 
     @Override
@@ -43,19 +49,23 @@ public class Runner implements Runnable {
                     keyIterator.remove();
                     try {
                         if (key.isAcceptable()) accept(key);
-                        if (key.isReadable()) read(key);
+                        if (key.isReadable()) readAsynchronously(key);
                     } catch (IOException e) {
+                        System.out.println("Error handling key: " + e.getMessage());
                         close(key);
                     }
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            stop();
         }
     }
 
     private void accept(SelectionKey key) throws IOException {
-        SocketChannel socketChannel = ((ServerSocketChannel) key.channel()).accept();
+        ServerSocketChannel server = (ServerSocketChannel) key.channel();
+        SocketChannel socketChannel = server.accept();
         if (socketChannel != null) {
             socketChannel.configureBlocking(false);
             System.out.println("accepted connection from client: " + socketChannel.getRemoteAddress());
@@ -63,39 +73,84 @@ public class Runner implements Runnable {
         }
     }
 
-    private void read(SelectionKey key) throws IOException {
-        ByteBuffer lenBuffer = ByteBuffer.allocate(4);
-        int len = tryRead(lenBuffer, key).flip().getInt();
-        ByteBuffer readBuffer = ByteBuffer.allocate(len);
-        tryRead(readBuffer, key).flip();
-        byte[] data = new byte[len];
-        readBuffer.get(data);
-        try {
-            Request req = (Request) serial.deserialize(data);
-            if (req != null) {
-                System.out.println(req);
-                Command command = commands.getCommands().get(req.getCommand().getString());
-                if (command != null) {
-                    Response response = command.apply(req.getData());
-                    key.interestOps(SelectionKey.OP_WRITE);
-                    write(key, response);
-                    key.interestOps(SelectionKey.OP_READ);
-                } else System.out.println("command is null");
+    private void readAsynchronously(SelectionKey key) throws IOException {
+        key.interestOps(key.interestOps() & ~SelectionKey.OP_READ);
+        forkJoinPool.submit(() -> {
+            SocketChannel sc = (SocketChannel) key.channel();
+            try {
+                ByteBuffer lenBuffer = read(sc, 4);
+                lenBuffer.flip();
+                int len = lenBuffer.getInt();
+                if (len <= 0 || len > 10_000_000) {
+                    throw new IOException("Invalid data length: " + len);
+                }
+                ByteBuffer dataBuffer = read(sc, len);
+                dataBuffer.flip();
+                byte[] data = new byte[len];
+                dataBuffer.get(data);
+                Request req = (Request) serial.deserialize(data);
+                if (req == null) {
+                    throw new IOException("Failed to deserialize request");
+                }
+                System.out.println("Received request: " + req);
+                Thread processThread = new Thread(() -> {
+                    try {
+                        Command command = commands.getCommands().get(req.command().getString());
+                        Response response;
+                        if (command == null) {
+                            response = new Response(false, "Unknown command");
+                        } else {
+                            response = dbManager.tryAuth(req.login(), req.password())
+                                    ? command.apply(req.data(), req.login())
+                                    : new Response(false, Response.INVALIG_AUTH);
+                        }
+                        Thread sendThread = new Thread(() -> {
+                            try {
+                                write(sc, response);
+                                key.interestOps(key.interestOps() | SelectionKey.OP_READ);
+                                selector.wakeup();
+                            } catch (IOException e) {
+                                System.out.println("Failed to send response: " + e.getMessage());
+                                close(key);
+                            }
+                        });
+                        sendThread.start();
+                    } catch (Exception e) {
+                        System.out.println("Processing error: " + e.getMessage());
+                        close(key);
+                    }
+                });
+                processThread.start();
+            } catch (IOException | ClassNotFoundException e) {
+                System.out.println("Read/Deserialize error: " + e.getMessage());
+                close(key);
             }
-        } catch (ClassNotFoundException e) {
-            System.out.println("failed to deserialize: " + e.getMessage());
-        }
+        });
     }
 
-    private void write(SelectionKey key, Response response) throws IOException {
-        SocketChannel sc = (SocketChannel) key.attachment();
+    private ByteBuffer read(SocketChannel sc, int capacity) throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(capacity);
+        while (buffer.hasRemaining()) {
+            int read = sc.read(buffer);
+            if (read == -1) {
+                throw new IOException("Connection closed by client");
+            }
+            if (read == 0) {
+                Thread.yield();
+            }
+        }
+        return buffer;
+    }
+
+
+    private void write(SocketChannel sc, Response response) throws IOException {
         byte[] data = serial.serialize(response);
         ByteBuffer writeBuffer = ByteBuffer.allocate(4 + data.length);
-        writeBuffer.clear().putInt(data.length).put(data).flip();
+        writeBuffer.putInt(data.length).put(data).flip();
         while (writeBuffer.hasRemaining()) {
             int written = sc.write(writeBuffer);
             if (written == -1) {
-                throw new IOException("connection closed");
+                throw new IOException("Connection closed during write");
             }
         }
     }
@@ -113,17 +168,30 @@ public class Runner implements Runnable {
     }
 
     private void close(SelectionKey key) {
-        SocketChannel sc = (SocketChannel) key.attachment();
+        SocketChannel sc = (SocketChannel) key.channel();
         try {
-            System.out.println("connection closed: " + sc.getRemoteAddress());
+            System.out.println("Connection closed: " + sc.getRemoteAddress());
         } catch (IOException e) {
-            System.out.println("failed to close: " + e.getMessage());
+            System.out.println("Failed to get remote address on close");
         } finally {
             key.cancel();
+            try {
+                sc.close();
+            } catch (IOException e) {
+                System.out.println("Failed to close socket channel: " + e.getMessage());
+            }
         }
     }
 
     public void stop() {
         running = false;
+        selector.wakeup();
+        forkJoinPool.shutdown();
+        try {
+            serverSocket.close();
+            selector.close();
+        } catch (IOException e) {
+            System.out.println("Failed to close server resources: " + e.getMessage());
+        }
     }
 }

@@ -13,7 +13,7 @@ public class FilterHasName extends Command {
     }
 
     @Override
-    public Response apply(Object request_data) {
+    public Response apply(Object request_data, String login) {
         String filter = request_data.toString();
         StringBuilder s = new StringBuilder("Result:\n");
         standardCollection.getCollection().stream().filter(group -> group.getName().equalsIgnoreCase(filter)).forEach(group -> s.append(group).append("\n"));

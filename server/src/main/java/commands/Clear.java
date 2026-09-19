@@ -12,7 +12,7 @@ public class Clear extends Command {
     }
 
     @Override
-    public Response apply(Object request_data) {
+    public Response apply(Object request_data, String login) {
         standardCollection.clearCollection();
         return new Response(true, "collection has been cleared successfully!");
     }

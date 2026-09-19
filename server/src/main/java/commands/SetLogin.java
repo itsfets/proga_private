@@ -2,10 +2,9 @@ package commands;
 
 import network.Response;
 
-public class Exit extends Command {
-
-    public Exit() {
-        super("exit", "exits the client application");
+public class SetLogin extends Command {
+    public SetLogin() {
+        super("set_login <login>", "Set your login for executing commands");
     }
 
     @Override

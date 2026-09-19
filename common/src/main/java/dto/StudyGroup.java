@@ -12,17 +12,18 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
     private int id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     private String name; //Поле не может быть null, Строка не может быть пустой
     private Coordinates coordinates; //Поле не может быть null
-    private java.time.LocalDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    private LocalDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     private long studentsCount; //Значение поля должно быть больше 0
     private long transferredStudents; //Значение поля должно быть больше 0
     private double averageMark; //Значение поля должно быть больше 0
     private FormOfEducation formOfEducation; //Поле не может быть null
     private Person groupAdmin; //Поле может быть null
+    private String createdBy;
 
     public StudyGroup() {
     }
 
-    public StudyGroup(int id, String name, Coordinates coordinates, long studentsCount, long transferredStudents, double averageMark, FormOfEducation formOfEducation, Person groupAdmin) {
+    public StudyGroup(int id, String name, Coordinates coordinates, long studentsCount, long transferredStudents, double averageMark, FormOfEducation formOfEducation, Person groupAdmin, String createdBy) {
         this.id = id;
         this.name = name;
         this.coordinates = coordinates;
@@ -32,6 +33,20 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
         this.averageMark = averageMark;
         this.formOfEducation = formOfEducation;
         this.groupAdmin = groupAdmin;
+        this.createdBy = createdBy;
+    }
+
+    public StudyGroup(int id, String name, Coordinates coordinates, LocalDateTime creationDate, long studentsCount, long transferredStudents, double averageMark, FormOfEducation formOfEducation, Person groupAdmin, String createdBy) {
+        this.id = id;
+        this.name = name;
+        this.coordinates = coordinates;
+        this.creationDate = creationDate;
+        this.studentsCount = studentsCount;
+        this.transferredStudents = transferredStudents;
+        this.averageMark = averageMark;
+        this.formOfEducation = formOfEducation;
+        this.groupAdmin = groupAdmin;
+        this.createdBy = createdBy;
     }
 
     public int getId() {
@@ -110,6 +125,14 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
         this.name = name;
     }
 
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
     @Override
     public String toString() {
         return "StudyGroup{\"id: " + id + ", "
@@ -120,18 +143,23 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
                 + "\"transferredStudents\": " + transferredStudents + ", "
                 + "\"averageMark\": " + averageMark + ", "
                 + "\"formOfEducation\": " + formOfEducation + ", "
-                + "\"Person\": " + ((groupAdmin != null) ? groupAdmin.toString() : null) + "}";
+                + "\"Person\": " + ((groupAdmin != null) ? groupAdmin.toString() : null) + ", "
+                + "\"createdBy\": " + createdBy + "}";
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         StudyGroup that = (StudyGroup) o;
-        return id == that.id && studentsCount == that.studentsCount && transferredStudents == that.transferredStudents && Double.compare(averageMark, that.averageMark) == 0 && Objects.equals(name, that.name) && Objects.equals(coordinates, that.coordinates) && Objects.equals(creationDate, that.creationDate) && formOfEducation == that.formOfEducation && Objects.equals(groupAdmin, that.groupAdmin);
+        return studentsCount == that.studentsCount &&
+                transferredStudents == that.transferredStudents && Double.compare(averageMark, that.averageMark) == 0 &&
+                Objects.equals(name, that.name) && Objects.equals(coordinates, that.coordinates) &&
+                Objects.equals(creationDate, that.creationDate) && formOfEducation == that.formOfEducation &&
+                Objects.equals(groupAdmin, that.groupAdmin) && Objects.equals(createdBy, that.createdBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, coordinates, creationDate, studentsCount, transferredStudents, averageMark, formOfEducation, groupAdmin);
+        return Objects.hash(id, name, coordinates, creationDate, studentsCount, transferredStudents, averageMark, formOfEducation, groupAdmin, createdBy);
     }
 }

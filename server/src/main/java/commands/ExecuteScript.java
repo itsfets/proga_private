@@ -9,7 +9,7 @@ public class ExecuteScript extends Command {
     }
 
     @Override
-    public Response apply(Object request_data) {
+    public Response apply(Object request_data, String login) {
         return null;
     }
 }

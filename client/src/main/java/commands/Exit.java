@@ -1,19 +1,19 @@
 package commands;
 
-import console.Console;
+import core.Session;
 import dto.Commands;
 import network.Request;
 
 public class Exit extends Command {
-    private final Console console;
+    private final Session userSession;
 
-    public Exit(Console console) {
+    public Exit(Session userSession) {
         super("exit", "exits the client");
-        this.console = console;
+        this.userSession = userSession;
     }
 
     @Override
     public Request apply(String[] arguments) {
-        return new Request(Commands.EXIT);
+        return new Request(Commands.EXIT, userSession.getLogin(), userSession.getPassword());
     }
 }

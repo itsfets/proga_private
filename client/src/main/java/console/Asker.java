@@ -16,7 +16,7 @@ public class Asker {
         this.ask = ask;
     }
 
-    private void askMain(StandardBuilder builder) {
+    private void askMain(StandardBuilder builder) throws Ask.AskBreak {
         ask.askThing("name: ", builder, StandardBuilder::name, s -> s, StandardConfig.NAME)
                 .askThing("coordinates.x: ", builder, StandardBuilder::coordinates_x, Integer::valueOf, StandardConfig.COORDINATES_X)
                 .askThing("coordinates.y: ", builder, StandardBuilder::coordinates_y, Integer::valueOf, StandardConfig.COORDINATES_Y)
@@ -38,14 +38,22 @@ public class Asker {
 
     public StudyGroup askStudyGroup(StandardValidator validator, int id) {
         StandardBuilder builder = new StandardBuilder();
-        askMain(builder);
+        try {
+            askMain(builder);
+        } catch (Ask.AskBreak e) {
+            return null;
+        }
         return builder.build(validator, id);
     }
 
     public StudyGroup askStudyGroup(StandardValidator validator) {
         StandardBuilder builder = new StandardBuilder();
-        ask.askThing("id: ", builder, StandardBuilder::id, Integer::valueOf, StandardConfig.ID);
-        askMain(builder);
+        try {
+            ask.askThing("id: ", builder, StandardBuilder::id, Integer::valueOf, StandardConfig.ID);
+            askMain(builder);
+        } catch (Ask.AskBreak e) {
+            return null;
+        }
         return builder.build(validator);
     }
 }

@@ -1,41 +1,17 @@
 package network;
 
+import java.io.Serial;
 import java.io.Serializable;
 
-public class Response implements Serializable {
+public record Response(boolean success, String message, String data) implements Serializable {
+    public static final String INVALIG_AUTH = "you are not authorized! use commands 'set_login' and 'set_password' to set your credentials!";
+    public static final String INVALIG_SG = "studyGroup is not valid!";
+    public static final String WRONG_TYPE = "data provided is not of type ";
+    @Serial
     private static final long serialVersionUID = 1L;
-    private final boolean success;
-    private final String message;
-    private final String data;
 
     public Response(boolean success, String message) {
         this(success, message, null);
-    }
-
-    public Response(boolean success, String message, String data) {
-        this.success = success;
-        this.message = message;
-        this.data = data;
-    }
-
-    public static String WRONG_TYPE() {
-        return "data provided is not of type ";
-    }
-
-    public static String INVALIG_SG() {
-        return "studyGroup is not valid!";
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public String getData() {
-        return data;
     }
 
     @Override
